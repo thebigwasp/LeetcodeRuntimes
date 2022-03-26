@@ -30,7 +30,7 @@ def prepare_submissions():
     headers = session.headers
     session.cookies.load()
     
-    csrftoken = session.cookies._cookies['.leetcode.com']['/']['csrftoken'].value
+    csrftoken = session.cookies._cookies['leetcode.com']['/']['csrftoken'].value
     
     headers['Host'] = 'leetcode.com'
     headers['User-Agent'] = 'Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101 Firefox/78.0'
