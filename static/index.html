@@ -1,0 +1,48 @@
+<html>
+	<head>
+		<style>
+			table {
+				margin-top: 10px;
+				display: none;
+			}
+			table.selected {
+				display: table;
+			}
+			table, th, td {
+				border: 1px solid black;
+				border-collapse: collapse;
+			}
+			th {
+				cursor: pointer;
+			}
+			th:hover {
+				text-decoration: underline;
+			}
+			th span {
+				pointer-events: none;
+			}
+			
+			.tab-button {
+				border: 1px solid black;
+				display: inline-block;
+				padding: 2px;
+				background-color: lightgray;
+				cursor: pointer;
+			}
+			
+			.tab-button.selected {
+				background-color: white;
+				cursor: auto;
+			}
+		</style>
+		<script src="main.js" async></script>
+	</head>
+	<body>
+		<button id="actualize" style="margin-bottom: 10px;">Actualize</button>
+		<span id="actualize-progress"></span>
+		<div>
+			<div id="tab-bar"></div>
+			<div id="tab-view"></div>
+		</div>
+	</body>
+</html>
