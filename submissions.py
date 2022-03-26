@@ -127,6 +127,8 @@ def actualize(session, accepted_submissions):
                 ws.append([submission['problemName'], submission['beats']])
         
         wb.save('submissions.xlsx')
+    
+    yield '1'
 
 
 def cached():

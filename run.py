@@ -29,7 +29,7 @@ def hello():
 def actualize():
     session, accepted_submissions = submissions.prepare_submissions()
     response = Response(stream_with_context(submissions.actualize(session, accepted_submissions)))
-    response.headers['Content-Length'] = len(accepted_submissions)
+    response.headers['Content-Length'] = len(accepted_submissions) + 1
     return response
 
 
