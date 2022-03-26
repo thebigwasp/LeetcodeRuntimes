@@ -115,17 +115,18 @@ def actualize(session, accepted_submissions):
         yield '1'
         i = i + 1
 
-    wb = openpyxl.Workbook()
-    for sheetname in wb.worksheets:
-        wb.remove(sheetname)
-    
-    for language in parsed:
-        ws = wb.create_sheet(language['lang'])
+    if len(accepted_submissions) > 0:
+        wb = openpyxl.Workbook()
+        for sheetname in wb.worksheets:
+            wb.remove(sheetname)
         
-        for submission in language['submissions']:
-            ws.append([submission['problemName'], submission['beats']])
-    
-    wb.save('submissions.xlsx')
+        for language in parsed:
+            ws = wb.create_sheet(language['lang'])
+            
+            for submission in language['submissions']:
+                ws.append([submission['problemName'], submission['beats']])
+        
+        wb.save('submissions.xlsx')
 
 
 def cached():
