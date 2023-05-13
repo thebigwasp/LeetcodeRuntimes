@@ -59,8 +59,6 @@ def actualize(session, accepted_submissions):
 
     i = 1
     for accepted_submission in accepted_submissions:
-        submissionLanguages = {}
-        
         leetcode_api_query = {
             "operationName":"Submissions",
             "query":"query Submissions($offset: Int!, $limit: Int!, $lastKey: String, $questionSlug: String!) {  submissionList(offset: $offset, limit: $limit, lastKey: $lastKey, questionSlug: $questionSlug) {submissions {lang, url, runtime}}}",
@@ -76,11 +74,16 @@ def actualize(session, accepted_submissions):
 
         leetcode_api_response = request(session, 'POST', 'https://leetcode.com/graphql', data = json.dumps(leetcode_api_query))
 
+        valid_runtime = lambda submission: submission['runtime'] != 'N/A'
+
         json_obj = leetcode_api_response.json()
-        
+        json_obj['data']['submissionList']['submissions'] = [submission for submission in json_obj['data']['submissionList']['submissions'] if valid_runtime(submission)]
+
+        current_problem_submissions_by_lang = {}
         for submission in json_obj['data']['submissionList']['submissions']:
-            if submission['lang'] not in submissionLanguages:
-                submissionLanguages[submission['lang']] = True
+            submission['runtime'] = int(submission['runtime'].replace(' ms', ''))
+            if submission['lang'] not in current_problem_submissions_by_lang or submission['runtime'] < current_problem_submissions_by_lang[submission['lang']]['runtime']:
+                current_problem_submissions_by_lang[submission['lang']] = submission
                 if submission['lang'] not in languages:
                     newLang = {
                         'lang': submission['lang'],
@@ -89,28 +92,28 @@ def actualize(session, accepted_submissions):
                     languages[submission['lang']] = newLang
                     parsed.append(newLang)
 
-                submission_url = submission['url']
-                submission_runtime = int(submission['runtime'].replace(' ms', ''))
+        for lang, submission in current_problem_submissions_by_lang.items():
+            submission_url = submission['url']
 
-                headers['Referer'] = 'https://leetcode.com/problems/' + accepted_submission['slug'] + '/submissions/'
+            headers['Referer'] = 'https://leetcode.com/problems/' + accepted_submission['slug'] + '/submissions/'
 
-                submission_detail = request(session, 'GET', 'https://leetcode.com' + submission_url)
+            submission_detail = request(session, 'GET', 'https://leetcode.com' + submission_url)
 
-                distribution_str = str_between(submission_detail.text, 'runtimeDistributionFormatted: \'', '\',\n')
-                if len(distribution_str) > 33:
-                    json_obj = json.loads(distribution_str.replace('\\u0022', '"'))
-                    runtimes_distribution = json_obj['distribution'] # [0] - ms, [1] - share
-                    percent_beats = decimal.Decimal(100)
-                    for runtime in runtimes_distribution:
-                        if submission_runtime > int(runtime[0]):
-                            percent_beats = percent_beats - decimal.Decimal(str(runtime[1]))
-                        else:
-                            break
+            distribution_str = str_between(submission_detail.text, 'runtimeDistributionFormatted: \'', '\',\n')
+            if len(distribution_str) > 33:
+                json_obj = json.loads(distribution_str.replace('\\u0022', '"'))
+                runtimes_distribution = json_obj['distribution'] # [0] - ms, [1] - share
+                percent_beats = decimal.Decimal(100)
+                for runtime in runtimes_distribution:
+                    if submission['runtime'] > int(runtime[0]):
+                        percent_beats = percent_beats - decimal.Decimal(str(runtime[1]))
+                    else:
+                        break
 
-                    languages[submission['lang']]['submissions'].append({
-                        'problemName': accepted_submission['title'],
-                        'beats': percent_beats
-                    })
+                languages[lang]['submissions'].append({
+                    'problemName': accepted_submission['title'],
+                    'beats': percent_beats
+                })
 
         yield '1'
         i = i + 1
