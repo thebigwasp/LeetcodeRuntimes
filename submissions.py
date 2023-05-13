@@ -46,7 +46,8 @@ def prepare_submissions():
         if pair['status'] == 'ac':
             accepted_submissions.append({
                 'title': pair['stat']['question__title'],
-                'slug': pair['stat']['question__title_slug']
+                'slug': pair['stat']['question__title_slug'],
+                'difficulty': pair['difficulty']['level'] # 1 - easy, 2 - medium, 3 - hard
             })
     
     return session, accepted_submissions
@@ -111,6 +112,8 @@ def actualize(session, accepted_submissions):
                         break
 
                 languages[lang]['submissions'].append({
+                    'slug': accepted_submission['slug'],
+                    'difficulty': accepted_submission['difficulty'],
                     'problemName': accepted_submission['title'],
                     'beats': percent_beats
                 })
@@ -127,7 +130,7 @@ def actualize(session, accepted_submissions):
             ws = wb.create_sheet(language['lang'])
             
             for submission in language['submissions']:
-                ws.append([submission['problemName'], submission['beats']])
+                ws.append([submission['slug'], submission['difficulty'], submission['problemName'], submission['beats']])
         
         wb.save('submissions.xlsx')
     
@@ -144,10 +147,12 @@ def cached():
                 'submissions': []
             }
             result.append(newLang)
-            for row in ws.iter_rows(min_row=1, max_col=2, max_row=ws.max_row, values_only=True):
+            for row in ws.iter_rows(min_row=1, max_col=4, max_row=ws.max_row, values_only=True):
                 newLang['submissions'].append({
-                    'problemName' :row[0],
-                    'beats': decimal.Decimal(row[1])
+                    'slug': row[0],
+                    'difficulty': row[1],
+                    'problemName' :row[2],
+                    'beats': decimal.Decimal(row[3])
                 })
     
     return result

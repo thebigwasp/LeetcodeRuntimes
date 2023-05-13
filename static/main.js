@@ -26,6 +26,16 @@ var sortedSubmissions = {};
 
 var currentSort = [];
 
+var difficulties = [];
+difficulties[1] = 'Easy';
+difficulties[2] = 'Medium';
+difficulties[3] = 'Hard';
+
+var difficultyColors = [];
+difficultyColors[1] = '#5cb85c';
+difficultyColors[2] = '#f0ad4e';
+difficultyColors[3] = '#d9534f';
+
 function sortSubmissions() {
 	sortedSubmissions['byProblemName'] = {}
 	sortedSubmissions['byProblemName']['ascending'] = clone(submissions);
@@ -41,6 +51,13 @@ function sortSubmissions() {
 			return a['beats'] - b['beats'];
 		});
 	});
+	sortedSubmissions['byDifficulty'] = {}
+	sortedSubmissions['byDifficulty']['ascending'] = clone(submissions);
+	sortedSubmissions['byDifficulty']['ascending'].forEach(function(submissions) {
+		submissions['submissions'].sort(function (a, b) {
+			return a['difficulty'] - b['difficulty'];
+		});
+	});
 	
 	sortedSubmissions['byProblemName']['descending'] = clone(sortedSubmissions['byProblemName']['ascending']);
 	sortedSubmissions['byProblemName']['descending'].forEach(function(submissions) {
@@ -48,6 +65,10 @@ function sortSubmissions() {
 	});
 	sortedSubmissions['byBeats']['descending'] = clone(sortedSubmissions['byBeats']['ascending']);
 	sortedSubmissions['byBeats']['descending'].forEach(function(submissions) {
+		submissions['submissions'].reverse();
+	});
+	sortedSubmissions['byDifficulty']['descending'] = clone(sortedSubmissions['byDifficulty']['ascending']);
+	sortedSubmissions['byDifficulty']['descending'].forEach(function(submissions) {
 		submissions['submissions'].reverse();
 	});
 	
@@ -94,6 +115,7 @@ function visualizeSubmissions(submissions) {
 				'<tr>' +
 					'<th onclick="onSortSubmissions(event)" sort="byProblemName"><span>Problem name</span><span></span></th>' +
 					'<th onclick="onSortSubmissions(event)" sort="byBeats"><span>Your runtime beats % of submissions</span><span></span></th>' +
+					'<th onclick="onSortSubmissions(event)" sort="byDifficulty"><span>Difficulty</span><span></span></th>' +
 				'</tr>' +
 			'</thead>' +
 			'<tbody>' + 
@@ -127,7 +149,11 @@ function visualizeSubmissions(submissions) {
 function populateTableBody(tableBody, submissions) {
 	let rows = '';
 	submissions.forEach(function (submission) {
-		rows += '<tr><td>'+submission['problemName']+'</td><td>'+submission['beats']+'</td></tr>';
+		rows += `<tr>
+				<td><a href="https://leetcode.com/problems/${submission['slug']}/">${submission['problemName']}</a></td>
+				<td>${submission['beats']}</td>
+				<td style="background-color:${difficultyColors[submission['difficulty']]};">${difficulties[submission['difficulty']]}</td>
+			</tr>`;
 	});
 	
 	tableBody.innerHTML = rows;
