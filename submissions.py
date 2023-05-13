@@ -117,7 +117,8 @@ def actualize(session, accepted_submissions):
                 'slug': accepted_submission['slug'],
                 'difficulty': accepted_submission['difficulty'],
                 'problemName': accepted_submission['title'],
-                'beats': percent_beats
+                'beats': percent_beats,
+                'runtime': submission['runtime']
             })
 
         yield '1'
@@ -132,7 +133,7 @@ def actualize(session, accepted_submissions):
             ws = wb.create_sheet(language['lang'])
             
             for submission in language['submissions']:
-                ws.append([submission['slug'], submission['difficulty'], submission['problemName'], submission['beats']])
+                ws.append([submission['slug'], submission['difficulty'], submission['problemName'], submission['beats'], submission['runtime']])
         
         wb.save('submissions.xlsx')
     
@@ -149,12 +150,13 @@ def cached():
                 'submissions': []
             }
             result.append(newLang)
-            for row in ws.iter_rows(min_row=1, max_col=4, max_row=ws.max_row, values_only=True):
+            for row in ws.iter_rows(min_row=1, max_col=5, max_row=ws.max_row, values_only=True):
                 newLang['submissions'].append({
                     'slug': row[0],
                     'difficulty': row[1],
                     'problemName' :row[2],
-                    'beats': row[3]
+                    'beats': row[3],
+                    'runtime': row[4]
                 })
     
     return result

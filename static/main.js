@@ -53,6 +53,13 @@ function sortSubmissions() {
 			return a['beats'] - b['beats'];
 		});
 	});
+	sortedSubmissions['byRuntime'] = {}
+	sortedSubmissions['byRuntime']['ascending'] = clone(submissions);
+	sortedSubmissions['byRuntime']['ascending'].forEach(function(submissions) {
+		submissions['submissions'].sort(function (a, b) {
+			return a['runtime'] - b['runtime'];
+		});
+	});
 	sortedSubmissions['byDifficulty'] = {}
 	sortedSubmissions['byDifficulty']['ascending'] = clone(submissions);
 	sortedSubmissions['byDifficulty']['ascending'].forEach(function(submissions) {
@@ -67,6 +74,10 @@ function sortSubmissions() {
 	});
 	sortedSubmissions['byBeats']['descending'] = clone(sortedSubmissions['byBeats']['ascending']);
 	sortedSubmissions['byBeats']['descending'].forEach(function(submissions) {
+		submissions['submissions'].reverse();
+	});
+	sortedSubmissions['byRuntime']['descending'] = clone(sortedSubmissions['byRuntime']['ascending']);
+	sortedSubmissions['byRuntime']['descending'].forEach(function(submissions) {
 		submissions['submissions'].reverse();
 	});
 	sortedSubmissions['byDifficulty']['descending'] = clone(sortedSubmissions['byDifficulty']['ascending']);
@@ -117,6 +128,7 @@ function visualizeSubmissions(submissions) {
 				'<tr>' +
 					'<th onclick="onSortSubmissions(event)" sort="byProblemName"><span>Problem name</span><span></span></th>' +
 					'<th onclick="onSortSubmissions(event)" sort="byBeats"><span>Your runtime beats % of submissions</span><span></span></th>' +
+					'<th onclick="onSortSubmissions(event)" sort="byRuntime"><span>Runtime (ms)</span><span></span></th>' +
 					'<th onclick="onSortSubmissions(event)" sort="byDifficulty"><span>Difficulty</span><span></span></th>' +
 				'</tr>' +
 			'</thead>' +
@@ -154,6 +166,7 @@ function populateTableBody(tableBody, submissions) {
 		rows += `<tr>
 				<td><a href="https://leetcode.com/problems/${submission['slug']}/">${submission['problemName']}</a></td>
 				<td>${submission['beats']}</td>
+				<td>${submission['runtime']}</td>
 				<td style="background-color:${difficultyColors[submission['difficulty']]};">${difficulties[submission['difficulty']]}</td>
 			</tr>`;
 	});
