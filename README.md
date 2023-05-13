@@ -1,7 +1,7 @@
 # LeetcodeRuntimes
 Scrape your [Leetcode](https://leetcode.com/) submissions and see how fast your solutions are.
 ***
-![submissions](https://user-images.githubusercontent.com/17221930/160248629-afc014b0-035f-43da-81ed-a1298c8e209c.png)
+![submissions](https://github.com/thebigwasp/LeetcodeRuntimes/assets/17221930/d0a78100-e27d-46c0-92a2-74988f5dbb9e)
 ***
 ```Actualize``` button starts leetcode scraping, which may take a long time in case of lots of submissions. If progress meter stopped, this probably means we hit leetcode throttle limit. Processing will continue after a pause.
 
