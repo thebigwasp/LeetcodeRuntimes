@@ -110,13 +110,15 @@ def actualize(session, accepted_submissions):
                         percent_beats = percent_beats - decimal.Decimal(str(runtime[1]))
                     else:
                         break
+            else:
+                percent_beats = 'No stats =('
 
-                languages[lang]['submissions'].append({
-                    'slug': accepted_submission['slug'],
-                    'difficulty': accepted_submission['difficulty'],
-                    'problemName': accepted_submission['title'],
-                    'beats': percent_beats
-                })
+            languages[lang]['submissions'].append({
+                'slug': accepted_submission['slug'],
+                'difficulty': accepted_submission['difficulty'],
+                'problemName': accepted_submission['title'],
+                'beats': percent_beats
+            })
 
         yield '1'
         i = i + 1
@@ -152,7 +154,7 @@ def cached():
                     'slug': row[0],
                     'difficulty': row[1],
                     'problemName' :row[2],
-                    'beats': decimal.Decimal(row[3])
+                    'beats': row[3]
                 })
     
     return result

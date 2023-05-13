@@ -48,6 +48,8 @@ function sortSubmissions() {
 	sortedSubmissions['byBeats']['ascending'] = clone(submissions);
 	sortedSubmissions['byBeats']['ascending'].forEach(function(submissions) {
 		submissions['submissions'].sort(function (a, b) {
+			if (isNaN(a['beats'])) return -1;
+			if (isNaN(b['beats'])) return 1;
 			return a['beats'] - b['beats'];
 		});
 	});
