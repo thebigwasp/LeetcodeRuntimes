@@ -1,3 +1,5 @@
+Moved to gitlab https://gitlab.com/thebigwasp/LeetcodeRuntimes
+
 # LeetcodeRuntimes
 Scrape your [Leetcode](https://leetcode.com/) submissions and see how fast your solutions are.
 ***
